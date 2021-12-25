@@ -38,10 +38,15 @@ def create_app(test_config=None):
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
+  @app.route('/categories')
+  def get_categories():
+    categories = Category.query.all()
 
-  @app.route('/')
-  def index():
-    return jsonify({'status': 'ok'})
+    return jsonify({
+      'success': True,
+      'total_categories': len(categories),
+      'categories': [category.format() for category in categories]
+    })
 
   '''
   @TODO: 
@@ -55,6 +60,42 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  def pagenate_questions(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+
+    questions = [question.format() for question in selection]
+    currenst_questions = questions[start:end]
+
+    return currenst_questions
+
+  @app.route('/questions')
+  def get_questions():
+    selection = Question.query.order_by(Question.id).all()
+    current_questions = pagenate_questions(request, selection)
+
+    categories = Category.query.all()
+    ret_categories = {}
+    for category in categories:
+      ret_categories[category.id] = category.type
+    
+    print(ret_categories)
+
+    # for question in current_questions:
+    #   for category in categories:
+    #     if question['category'] == category.id:
+    #       question['category'] = category.type
+
+    # print(current_questions)
+
+    return jsonify({
+        'questions': current_questions,
+        'total_questions': len(selection),
+        # 'categories': [category.type for category in categories],
+        'categories': ret_categories,
+        'current_category': 'History',
+    })
 
   '''
   @TODO: 
