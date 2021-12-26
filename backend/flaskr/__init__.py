@@ -79,22 +79,11 @@ def create_app(test_config=None):
     ret_categories = {}
     for category in categories:
       ret_categories[category.id] = category.type
-    
-    print(ret_categories)
-
-    # for question in current_questions:
-    #   for category in categories:
-    #     if question['category'] == category.id:
-    #       question['category'] = category.type
-
-    # print(current_questions)
 
     return jsonify({
         'questions': current_questions,
         'total_questions': len(selection),
-        # 'categories': [category.type for category in categories],
         'categories': ret_categories,
-        'current_category': 'History',
     })
 
   '''
@@ -135,6 +124,22 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/categories/<int:category_id>/questions')
+  def get_carrent_category_questions(category_id):
+    selection = Question.query.filter_by(category=category_id).order_by(Question.id).all()
+    current_questions = pagenate_questions(request, selection)
+
+    categories = Category.query.all()
+    ret_categories = {}
+    for category in categories:
+      ret_categories[category.id] = category.type
+
+    return jsonify({
+        'questions': current_questions,
+        'total_questions': len(selection),
+        'categories': ret_categories,
+        'current_category': Category.query.get(category_id).type,
+    })
 
 
   '''
