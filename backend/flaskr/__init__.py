@@ -41,11 +41,14 @@ def create_app(test_config=None):
   @app.route('/categories')
   def get_categories():
     categories = Category.query.all()
+    ret_categories = {}
+    for category in categories:
+      ret_categories[category.id] = category.type
 
     return jsonify({
       'success': True,
       'total_categories': len(categories),
-      'categories': [category.format() for category in categories]
+       'categories': ret_categories
     })
 
   '''
@@ -96,8 +99,7 @@ def create_app(test_config=None):
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
     try:
-      db.session.delete(Question.query.get(question_id))
-      db.session.commit()
+      Question.query.get(question_id).delete()
       return jsonify({
         'success': True
       })
