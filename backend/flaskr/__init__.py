@@ -95,11 +95,14 @@ def create_app(test_config=None):
   '''
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
-    db.session.delete(Question.query.get(question_id))
-    db.session.commit()
-    return jsonify({
-      'success': True
-    })
+    try:
+      db.session.delete(Question.query.get(question_id))
+      db.session.commit()
+      return jsonify({
+        'success': True
+      })
+    except:
+      abort(422)
 
   '''
   @TODO: 
@@ -133,21 +136,23 @@ def create_app(test_config=None):
   '''
   @app.route('/categories/<int:category_id>/questions')
   def get_carrent_category_questions(category_id):
-    selection = Question.query.filter_by(category=category_id).order_by(Question.id).all()
-    current_questions = pagenate_questions(request, selection)
+    try:
+      selection = Question.query.filter_by(category=category_id).order_by(Question.id).all()
+      current_questions = pagenate_questions(request, selection)
 
-    categories = Category.query.all()
-    ret_categories = {}
-    for category in categories:
-      ret_categories[category.id] = category.type
+      categories = Category.query.all()
+      ret_categories = {}
+      for category in categories:
+        ret_categories[category.id] = category.type
 
-    return jsonify({
+      return jsonify({
         'questions': current_questions,
         'total_questions': len(selection),
         'categories': ret_categories,
         'current_category': Category.query.get(category_id).type,
-    })
-
+      })
+    except:
+      abort(400)
 
   '''
   @TODO: 
@@ -166,46 +171,70 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
-@app.errorhandler(400)
-def bad_request_error(error):
-    return render_template('errors/400.html'), 400
+  @app.errorhandler(400)
+  def bad_request(error):
+    return jsonify({
+      "success": False, 
+      "error": 400,
+      "message": "bad request"
+    }), 400
 
+  @app.errorhandler(401)
+  def unauthorized(error):
+    return jsonify({
+      "success": False, 
+      "error": 401,
+      "message": "unauthorized"
+    }), 401
 
-@app.errorhandler(401)
-def unauthorized_error(error):
-    return render_template('errors/401.html'), 401
+  @app.errorhandler(403)
+  def access_frobidden(error):
+    return jsonify({
+      "success": False, 
+      "error": 403,
+      "message": "access forbidden"
+    }), 403
 
+  @app.errorhandler(404)
+  def not_found(error):
+    return jsonify({
+      "success": False, 
+      "error": 404,
+      "message": "resource not found"
+    }), 404
 
-@app.errorhandler(403)
-def access_frobidden_error(error):
-    return render_template('errors/403.html'), 403
+  @app.errorhandler(405)
+  def method_not_allowed(error):
+    return jsonify({
+      "success": False, 
+      "error": 405,
+      "message": "method not allowed"
+    }), 405
 
+  @app.errorhandler(409)
+  def conflict(error):
+    return jsonify({
+      "success": False, 
+      "error": 409,
+      "message": "conflict"
+    }), 409
 
-@app.errorhandler(404)
-def not_found_error(error):
-    return render_template('errors/404.html'), 404
+  @app.errorhandler(422)
+  def unprocessable(error):
+    return jsonify({
+      "success": False, 
+      "error": 422,
+      "message": "unprocessable"
+    }), 422
 
-
-@app.errorhandler(405)
-def method_not_allowed_error(error):
-    return render_template('errors/405.html'), 405
-
-
-@app.errorhandler(409)
-def conflict_error(error):
-    return render_template('errors/409.html'), 409
-
-
-@app.errorhandler(422)
-def unprocessable_entity_error(error):
-    return render_template('errors/422.html'), 422
-
-
-@app.errorhandler(500)
-def server_error(error):
-    return render_template('errors/500.html'), 500
-
-  
+  @app.errorhandler(500)
+  def server_error(error):
+    return jsonify({
+      "success": False, 
+      "error": 500,
+      "message": "server error"
+    }), 500
+    
   return app
 
     
