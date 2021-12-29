@@ -98,7 +98,7 @@ def create_app(test_config=None):
     db.session.delete(Question.query.get(question_id))
     db.session.commit()
     return jsonify({
-      'status': 200
+      'success': True
     })
 
   '''
@@ -166,6 +166,45 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+@app.errorhandler(400)
+def bad_request_error(error):
+    return render_template('errors/400.html'), 400
+
+
+@app.errorhandler(401)
+def unauthorized_error(error):
+    return render_template('errors/401.html'), 401
+
+
+@app.errorhandler(403)
+def access_frobidden_error(error):
+    return render_template('errors/403.html'), 403
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(405)
+def method_not_allowed_error(error):
+    return render_template('errors/405.html'), 405
+
+
+@app.errorhandler(409)
+def conflict_error(error):
+    return render_template('errors/409.html'), 409
+
+
+@app.errorhandler(422)
+def unprocessable_entity_error(error):
+    return render_template('errors/422.html'), 422
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('errors/500.html'), 500
+
   
   return app
 
