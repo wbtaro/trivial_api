@@ -126,6 +126,12 @@ def create_app(test_config=None):
       difficulty=body.get('difficulty', None)
     )
 
+    if (not question.question) |\
+      (not question.answer) |\
+      (not question.category) |\
+      (not question.difficulty):
+      abort(400)
+
     try:
       question.insert()
       return jsonify({
