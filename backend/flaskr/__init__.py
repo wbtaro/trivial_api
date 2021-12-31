@@ -129,6 +129,7 @@ def create_app(test_config=None):
     @app.route('/questions/search', methods=['POST'])
     def search_questions():
         try:
+            print(request.get_json())
             search_term = "%{}%".format(
               request.get_json().get('searchTerm', '')
             )

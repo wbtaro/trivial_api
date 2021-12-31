@@ -75,32 +75,6 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-
-
-## Review Comment to the Students
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/api/v1.0/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/api/v1.0/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
-```
-
-
 ## Testing
 To run the tests, run
 ```
@@ -108,4 +82,141 @@ dropdb trivia_test
 createdb trivia_test
 psql trivia_test < trivia.psql
 python test_flaskr.py
+```
+
+
+## API Refferences
+
+### `GET '/categories'`
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+
+#### Request
+None
+
+#### Response
+```
+{
+  '1' : "Science",
+  '2' : "Art",
+  '3' : "Geography",
+  '4' : "History",
+  '5' : "Entertainment",
+  '6' : "Sports"
+}
+```
+
+### `GET '/questions?page=xx'`
+- Fetches questions pagenated by ten questions with categories and total question number.
+
+#### Request
+- page: page number
+
+#### Response
+```
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "questions": [
+    {
+      "answer": "Mona Lisa", 
+      "category": 2, 
+      "difficulty": 3, 
+      "id": 17, 
+      "question": "La Giaconda is better known as what?"
+    }, 
+    ...
+  ], 
+  "total_questions": 18
+}
+```
+### `POST '/questions'`
+- create a new question
+
+#### Request
+```
+{
+  "answer": "Mona Lisa", 
+  "category": 2, 
+  "difficulty": 3, 
+  "id": 17, 
+  "question": "La Giaconda is better known as what?"
+}
+```
+
+#### Response
+```
+{
+  "sucess": "True"
+}
+```
+### `DELETE '/questions/{question id}'`
+- delete questions specified with question id
+
+#### Request
+None
+
+#### Response
+```
+{
+  "sucess": "True"
+}
+```
+### `POST '/questions/search'`
+- return questions that contains `searchTerm`
+
+#### Request
+```
+{
+  "searchTerm": "the"
+}
+```
+
+#### Response
+```
+{
+  "questions": [
+    {
+      "answer": "Maya Angelou", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 5, 
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    }, 
+    ...
+  ], 
+  "total_questions": 9
+}
+```
+### `POST '/quizzes'`
+- Fetches a specific category question that is not in prevous questions.
+
+#### Request
+```
+{
+  "previous_questions": ["22", "24"],
+  "quiz_category": {
+      "type": "Science",
+      "id": "1"
+  }
+}
+```
+
+#### Response
+```
+{
+  "question": {
+    "answer": "Alexander Fleming", 
+    "category": 1, 
+    "difficulty": 3, 
+    "id": 21, 
+    "question": "Who discovered penicillin?"
+  }
+}
+
 ```
