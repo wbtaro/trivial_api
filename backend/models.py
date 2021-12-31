@@ -3,15 +3,17 @@ from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
+from settings import DB_NAME, DB_PASSWORD, DB_USER, DB_URL
+
 database_name = "trivia"
 username = 'student'
 password = 'student'
 url = 'localhost:5432'
 database_path = "postgresql://{}:{}@{}/{}".format(
-  username,
-  password,
-  url,
-  database_name
+  DB_USER,
+  DB_PASSWORD,
+  DB_URL,
+  DB_NAME
 )
 
 db = SQLAlchemy()

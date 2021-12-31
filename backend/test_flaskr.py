@@ -1,12 +1,11 @@
+from dotenv import load_dotenv
 import os
-import subprocess
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
 from models import setup_db, Question, Category
-
 
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
@@ -16,16 +15,17 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app({'debug': True})
         self.client = self.app.test_client
 
-    # set dataebase for test
-        database_name = "trivia_test"
-        username = 'student'
-        password = 'student'
-        url = 'localhost:5432'
+        load_dotenv()
+        # set dataebase for test
+        TEST_DB_NAME = os.environ.get('TEST_DB_NAME')
+        TEST_DB_USER = os.environ.get('TEST_DB_USER')
+        TEST_DB_PASSWORD = os.environ.get("TEST_DB_PASSWORD")
+        TEST_DB_URL = os.environ.get('TEST_DB_URL')
         database_path = "postgresql://{}:{}@{}/{}".format(
-          username,
-          password,
-          url,
-          database_name
+          TEST_DB_USER,
+          TEST_DB_PASSWORD,
+          TEST_DB_URL,
+          TEST_DB_NAME
         )
         setup_db(self.app, database_path)
 
