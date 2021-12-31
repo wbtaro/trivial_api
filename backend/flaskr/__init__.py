@@ -13,9 +13,6 @@ def create_app(test_config=None):
   app = Flask(__name__)
   setup_db(app)
   
-  '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-  '''
   cors = CORS(app, resources={r'/*': {'origins': '*'}})
 
   '''
@@ -162,7 +159,8 @@ def create_app(test_config=None):
         result = Question.query.all()
 
       return jsonify({
-        'questions': [question.format() for question in result]
+        'questions': [question.format() for question in result],
+        'total_questions': len(result)
       })
     except:
       abort(422)
@@ -210,23 +208,30 @@ def create_app(test_config=None):
   def get_next_quizze():
     body = request.get_json()
     try:
-      category = body.get('quiz_category', None).get('id', None)
+      quiz_category = body.get('quiz_category', None).get('id', None)
       previous_questions = body.get('previous_questions', [])
       questions = []
-      if category != 0:
-        questions = Question.query.filter(category=category).all()
+      if quiz_category != 0:
+        questions = Question.query.filter_by(category=quiz_category).all()
       else:
         questions = Question.query.all()
 
       next_question = None
+      force_end = True
       for _ in range(len(questions)):
         next_question = random.sample(questions, 1).pop()
         if next_question.id not in previous_questions:
+          force_end = False
           break
-      
-      return jsonify({
-        'question': next_question.format()
-      })
+
+      if force_end:
+        return jsonify({
+          'message': 'no questions to return'
+        })
+      else:
+        return jsonify({
+          'question': next_question.format()
+        })
     except Exception as e:
       abort(422)
 
