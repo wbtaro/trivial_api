@@ -13,8 +13,10 @@ class TriviaTestCase(unittest.TestCase):
 
   def setUp(self):
     """Define test variables and initialize app."""
-    self.app = create_app()
+    self.app = create_app({'debug': True})
     self.client = self.app.test_client
+
+    # set dataebase for test
     database_name = "trivia_test"
     username = 'student'
     password = 'student'
