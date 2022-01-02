@@ -5,10 +5,6 @@ import json
 
 from settings import DB_NAME, DB_PASSWORD, DB_USER, DB_URL
 
-database_name = "trivia"
-username = 'student'
-password = 'student'
-url = 'localhost:5432'
 database_path = "postgresql://{}:{}@{}/{}".format(
   DB_USER,
   DB_PASSWORD,
